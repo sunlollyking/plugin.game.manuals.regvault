@@ -105,7 +105,8 @@ def _inner_rom(archive):
 
 
 def hash_file(path, size_limit=DEFAULT_SIZE_LIMIT, opener=None, sizer=None):
-    """The MD5 of a game, reaching inside a zip when it is one.
+    """The MD5 of a game, and the name of the file it is in, reaching inside a
+    zip when it is one.
 
     :param opener: called with the path, returning a readable file object.
         Games often live on a share, which plain open() cannot reach, so the
@@ -125,6 +126,10 @@ def hash_file(path, size_limit=DEFAULT_SIZE_LIMIT, opener=None, sizer=None):
     if size == 0:
         raise Skipped("is empty")
 
+    # A zip too, as its whole directory is read before its game can be sized
+    if size_limit and size > size_limit:
+        raise Skipped("is %d MB, above the size limit" % (size // (1024 * 1024)))
+
     try:
         stream = opener(path)
     except OSError as error:
@@ -138,13 +143,9 @@ def hash_file(path, size_limit=DEFAULT_SIZE_LIMIT, opener=None, sizer=None):
         is_archive = False
 
     if not is_archive:
-        if size_limit and size > size_limit:
-            stream.close()
-            raise Skipped("is %d MB, above the size limit" % (size // (1024 * 1024)))
-
         try:
             with stream:
-                return _hash_stream(stream, path, size)
+                return _hash_stream(stream, path, size), path
         except OSError as error:
             raise Skipped("cannot be read: %s" % error)
 
@@ -163,7 +164,7 @@ def hash_file(path, size_limit=DEFAULT_SIZE_LIMIT, opener=None, sizer=None):
                 )
 
             with archive.open(entry) as inner:
-                return _hash_stream(inner, entry.filename, entry.file_size)
+                return _hash_stream(inner, entry.filename, entry.file_size), entry.filename
     except Skipped:
         raise
     except (zipfile.BadZipFile, OSError, RuntimeError) as error:

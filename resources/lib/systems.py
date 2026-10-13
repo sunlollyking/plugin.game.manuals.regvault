@@ -479,11 +479,13 @@ def from_extension(path):
     return list(EXTENSION_HINTS.get(extension, []))
 
 
-def candidates(path, limit=3):
+def candidates(path, name="", limit=3):
     """The systems to try for a game, best first.
 
     The folder hint leads when there is one, because it is the more reliable
     of the two, and the extension fills in behind it.
+
+    :param name: the file the game is in, when that is an entry in a zip
     """
     ordered = []
 
@@ -491,7 +493,7 @@ def candidates(path, limit=3):
     if folder:
         ordered.append(folder)
 
-    for system in from_extension(path):
+    for system in from_extension(name or path):
         if system not in ordered:
             ordered.append(system)
 

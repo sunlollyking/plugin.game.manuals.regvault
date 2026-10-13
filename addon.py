@@ -120,7 +120,7 @@ def search(params):
         return
 
     try:
-        rom_hash = hashing.hash_file(
+        rom_hash, rom_name = hashing.hash_file(
             path,
             setting_int("rom_size_limit", 512) * 1024 * 1024,
             opener=vfs_open,
@@ -135,7 +135,7 @@ def search(params):
 
     # The folder name is the better hint at which machine a game is for, and
     # the extension follows it. A wrong guess is only a 404, so each is tried.
-    for system in systems.candidates(path):
+    for system in systems.candidates(path, rom_name):
         try:
             game = client.lookup(system, rom_hash)
         except (regvault.Unavailable, regvault.RateLimited) as error:

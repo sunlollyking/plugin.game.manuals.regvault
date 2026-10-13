@@ -29,5 +29,11 @@ class FolderTest(unittest.TestCase):
         self.assertIsNone(self.folder("Sonic The Hedgehog 2"))
 
 
+class CandidatesTest(unittest.TestCase):
+    def test_a_zipped_game_is_known_by_the_file_inside(self):
+        self.assertEqual(systems.candidates("/games/Mario.zip"), [])
+        self.assertIn("nes", systems.candidates("/games/Mario.zip", "Mario.nes"))
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -12,6 +12,7 @@ limit response stops the run rather than being retried around.
 No Kodi imports here, so it can be tested on its own.
 """
 
+import http.client
 import json
 import time
 import urllib.error
@@ -83,7 +84,7 @@ class Client(object):
         try:
             with response:
                 return json.loads(response.read().decode("utf-8"))
-        except (ValueError, UnicodeDecodeError) as error:
+        except (ValueError, UnicodeDecodeError, OSError, http.client.HTTPException) as error:
             raise Unavailable("unreadable answer: %s" % error)
 
     def size_of(self, url):

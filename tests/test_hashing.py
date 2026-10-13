@@ -48,7 +48,7 @@ class HashFile(unittest.TestCase):
         return len(self.files[path])
 
     def _hash(self, path):
-        return hashing.hash_file(path, opener=self._open, sizer=self._size)
+        return hashing.hash_file(path, opener=self._open, sizer=self._size)[0]
 
     def test_an_ines_header_is_left_out_of_the_hash(self):
         payload = b"\x01" * 40960
@@ -84,6 +84,24 @@ class HashFile(unittest.TestCase):
         self.files["game.zip"] = buffer.getvalue()
 
         self.assertEqual(self._hash("game.zip"), md5(payload))
+
+    def test_a_zipped_rom_is_named_by_the_file_inside_it(self):
+        buffer = io.BytesIO()
+        with zipfile.ZipFile(buffer, "w") as archive:
+            archive.writestr("Mario.nes", b"\x05" * 40960)
+        self.files["Mario.zip"] = buffer.getvalue()
+
+        name = hashing.hash_file("Mario.zip", opener=self._open, sizer=self._size)[1]
+        self.assertEqual(name, "Mario.nes")
+
+    def test_a_zip_above_the_size_limit_is_not_opened(self):
+        buffer = io.BytesIO()
+        with zipfile.ZipFile(buffer, "w") as archive:
+            archive.writestr("game.nes", b"\x05" * 40960)
+        self.files["game.zip"] = buffer.getvalue()
+
+        with self.assertRaises(hashing.Skipped):
+            hashing.hash_file("game.zip", size_limit=1024, opener=self._open, sizer=self._size)
 
 
 if __name__ == "__main__":
