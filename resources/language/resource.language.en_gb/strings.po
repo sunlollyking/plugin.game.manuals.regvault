@@ -1,6 +1,6 @@
 # Kodi Media Center language file
 # Addon Name: Game Manuals (REG-Vault)
-# Addon id: service.manuals.regvault
+# Addon id: plugin.game.manuals.regvault
 msgid ""
 msgstr ""
 "Project-Id-Version: KODI Addons\n"

@@ -4,7 +4,7 @@
 Kodi calls this the way it calls a subtitle service - as a plugin, with a
 directory listing for an answer:
 
-  plugin://service.manuals.regvault/?action=search&path=<game>&title=<name>
+  plugin://plugin.game.manuals.regvault/?action=search&path=<game>&title=<name>
 
 The dialog hands over the game's path and leaves the matching to us, so the
 ROM is hashed here rather than in Kodi. Each result's path is the manual
