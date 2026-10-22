@@ -6,10 +6,9 @@
   <requires>
     <import addon="xbmc.python" version="3.0.1"/>
   </requires>
-  <!-- Game Manuals knows a manual provider by the plugin.game.manuals. id -->
-  <extension point="xbmc.python.pluginsource" library="addon.py">
-    <provides>game</provides>
-  </extension>
+  <!-- Game Manuals knows a manual provider by the plugin.game.manuals. id. It
+       provides no content, so Kodi doesn't offer it to open on its own. -->
+  <extension point="xbmc.python.pluginsource" library="addon.py"/>
   <extension point="xbmc.addon.metadata">
     <summary lang="en_GB">Finds game manuals in the REG-Vault catalogue</summary>
     <description lang="en_GB">Answers Kodi when it goes looking for a manual for a game that has none, using the REG-Vault catalogue.
